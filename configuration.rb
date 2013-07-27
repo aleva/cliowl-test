@@ -6,7 +6,7 @@
 # Local configurations that must be changed to test your cliowl implementation
 class Configuration
 
-  # Address of the cliowl server that contains the implementation being tested
+  # Address of the cliowl server that contains the implementation being tested (without "http://")
   @@server = 'localhost'  
   def self.server
     @@server

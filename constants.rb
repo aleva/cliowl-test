@@ -11,5 +11,11 @@ class Constants
   def self.fetch_response
     @@fetch_response
   end
+
+  # Session token length
+  @@token_length = 32 
+  def self.token_length
+    @@token_length
+  end
   
 end

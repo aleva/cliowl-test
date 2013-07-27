@@ -23,15 +23,19 @@ class Tester
     server = Configuration.server
     expected = Constants.fetch_response
     addr = Configuration.cliowl_address
-    
+
     Net::HTTP.get(server, "#{addr}/fetch") == expected
   end
   
-  def test_login
+  def test_login_ok
     server = Configuration.server
     addr = Configuration.cliowl_address
     user = Configuration.user
     pw = Configuration.password
-    false
+    token_length = Constants.token_length
+    
+    uri = URI("http://#{server}#{addr}/login")
+    res = Net::HTTP.post_form(uri, 'txtusuario' => 'yuri', 'txtsenha' => 'abc')
+    res.body.length == token_length and res.body =~ /^[0-9a-zA-Z]*$/
   end
 end
