@@ -29,4 +29,16 @@ class Configuration
   def self.password
     @@password
   end
+  
+  # User that does not exist within the cliowl server
+  @@wrong_user = 'wrong_user'  
+  def self.wrong_user
+    @@wrong_user
+  end
+  
+  # Wrong password for the user @@user
+  @@wrong_password = 'wrong_password'  
+  def self.wrong_password
+    @@wrong_password
+  end
 end
