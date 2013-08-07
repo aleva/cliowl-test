@@ -41,4 +41,17 @@ class Configuration
   def self.wrong_password
     @@wrong_password
   end
+  
+  # A test file with content for a page (in markdown format) 
+  @@test_page = 'data/test.md'  
+  def self.test_page
+    @@test_page
+  end
+  
+  # A test file with content for a page (in markdown format) different from the previous one
+  @@other_test_page = 'data/test2.md'  
+  def self.other_test_page
+    @@other_test_page
+  end
+  
 end
