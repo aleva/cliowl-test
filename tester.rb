@@ -8,6 +8,9 @@
 # JSON parsing
 require 'json'
 
+# MD5 for passwords
+require 'digest/md5'
+
 # HTTP requests
 require './http-helper.rb'
 
@@ -28,7 +31,10 @@ class Tester
   def test_fetch
     server = Configuration.server
     addr = Configuration.cliowl_address
-    HttpHelper.get(server, "#{addr}/fetch") == Constants.fetch_response
+    
+    res = HttpHelper.get(server, "#{addr}/fetch")
+    puts "\nTester#test_fetch:\n#{res}" if Configuration.verbose
+    res == Constants.fetch_response
   end
   
   # Test login with the correct parameters
@@ -37,6 +43,7 @@ class Tester
   # otherwise
   def test_correct_login
     res = make_login Configuration.user, Configuration.password
+    puts "\nTester#test_correct_login:\n#{res}" if Configuration.verbose
     res.length == Constants.token_length and res =~ /^[0-9a-zA-Z]*$/
   end
   
@@ -45,6 +52,7 @@ class Tester
   # @return [Boolean] true if the server returns a empty string, false otherwise
   def test_wrong_user_login
     res = make_login Configuration.wrong_user, Configuration.password
+    puts "\nTester#test_wrong_user_login:\n#{res}" if Configuration.verbose
     res == Constants.failure_message
   end
   
@@ -53,6 +61,7 @@ class Tester
   # @return [Boolean] true if the server returns a empty string, false otherwise
   def test_wrong_password_login
     res = make_login Configuration.user, Configuration.wrong_password
+    puts "\nTester#test_wrong_password_login:\n#{res}" if Configuration.verbose
     res == Constants.failure_message
   end
     
@@ -75,6 +84,7 @@ class Tester
     # Remove the just created page
     remove_page page_key, token
     
+    puts "\nTester#test_create_page:\n#{res}" if Configuration.verbose
     res == Constants.success_message
   end
     
@@ -100,7 +110,8 @@ class Tester
       return false
     end
     
-    res = remove_page page_key, token    
+    res = remove_page page_key, token
+    puts "\nTester#test_remove_page:\n#{res}" if Configuration.verbose 
     res == Constants.success_message
   end
   
@@ -127,7 +138,8 @@ class Tester
       return false
     end
     
-    res = post_page file2, token, page_key, 'test-tag-2', 'This is a Test Page 2'   
+    res = post_page file2, token, page_key, 'test-tag-2', 'This is a Test Page 2'
+    puts "\nTester#test_update_page:\n#{res}" if Configuration.verbose 
     res == Constants.success_message
   end
   
@@ -164,8 +176,12 @@ class Tester
     
     res = HttpHelper.get(server, "#{addr}/list/#{user}")
     
-    # Parse JSON return
-    page_list = JSON.parse res
+    begin
+      # Parse JSON return
+      page_list = JSON.parse res
+    rescue
+      return false
+    end
     
     # Checks if all the page keys matches
     keys_match = true
@@ -181,7 +197,36 @@ class Tester
       keys_match = false if not page_key_match
     end
     
+    puts "\nTester#test_list_pages:\n#{res}" if Configuration.verbose
     page_list.size == pages.size and keys_match    
+  end
+  
+  def test_get_page
+    server = Configuration.server
+    addr = Configuration.cliowl_address
+    file = Configuration.test_page
+    user = Configuration.user
+    
+    file_content = File.read(file)
+    
+    # This test depends on a succesfull login
+    if test_correct_login
+      token = make_login user, Configuration.password
+    else
+      return false
+    end
+    
+    key = 'page-key-4'
+    
+    if test_create_page
+      post_page file, token, key, 'test-tag', 'This is a Test Page'
+    else
+      return false
+    end
+    
+    res = HttpHelper.get(server, "#{addr}/page/#{user}/#{key}")
+    puts "\nTester#test_get_page:\n#{res}" if Configuration.verbose    
+    res == file_content
   end
   
   # Try to make login
@@ -192,8 +237,9 @@ class Tester
   def make_login user, password
     server = Configuration.server
     addr = Configuration.cliowl_address
-     
-    HttpHelper.post "http://#{server}#{addr}/login", { 'user' => user, 'password' => password }
+    pw_md5 = Digest::MD5.hexdigest(password)
+    
+    HttpHelper.post "http://#{server}#{addr}/login", { 'user' => user, 'password' => pw_md5 }
   end
   
   # Posts a page (create or delete)

@@ -6,6 +6,15 @@
 # Local configurations that must be changed to test your cliowl implementation
 class Configuration
 
+  # True if the program is on verbose mode
+  @@verbose = false
+  def self.verbose
+    @@verbose
+  end  
+  def self.verbose= value
+    @@verbose = value
+  end
+
   # Address of the cliowl server that contains the implementation being tested (without "http://")
   @@server = 'localhost'  
   def self.server
