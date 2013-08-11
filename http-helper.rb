@@ -18,7 +18,11 @@ class HttpHelper
   # @param [String] address - URL
   # @return [String] server response
   def self.get server, address
-    Net::HTTP.get(server, address)
+    begin
+      Net::HTTP.get(server, address)
+    rescue
+      nil
+    end
   end
   
   # Makes a get HTTP request
@@ -27,9 +31,13 @@ class HttpHelper
   # @param [String] data - hash with the data fields
   # @return [String] server response
   def self.post url, data
-    uri = URI(url)
-    res = Net::HTTP.post_form(uri, data)
-    res.body
+    begin
+      uri = URI(url)
+      res = Net::HTTP.post_form(uri, data)
+      res.body
+    rescue
+      nil
+    end
   end
   
   # Make a post with multipart data
