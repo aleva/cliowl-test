@@ -237,9 +237,8 @@ class Tester
   def make_login user, password
     server = Configuration.server
     addr = Configuration.cliowl_address
-    pw_md5 = Digest::MD5.hexdigest(password)
     
-    HttpHelper.post "http://#{server}#{addr}/login", { 'user' => user, 'password' => pw_md5 }
+    HttpHelper.post "http://#{server}#{addr}/login", { 'user' => user, 'password' => password }
   end
   
   # Posts a page (create or delete)
