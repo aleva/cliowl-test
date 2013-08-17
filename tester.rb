@@ -44,7 +44,7 @@ class Tester
   def test_correct_login
     res = make_login Configuration.user, Configuration.password
     puts "\nTester#test_correct_login:\n#{res}" if Configuration.verbose
-    res and res.length == Constants.token_length and res =~ /^[0-9a-zA-Z]*$/
+    res and res.length == Constants.token_length and res =~ /^[0-9a-f]*$/
   end
   
   # Test login with a user that does not exist
