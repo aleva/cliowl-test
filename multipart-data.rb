@@ -3,6 +3,9 @@
 # created: 2013-08-06
 # author: Yuri David Santos
 
+# Local configurations
+require './configuration.rb'
+
 # This class provides support to build multipart data to use for HTTP posts
 # with files and other data
 class MultipartData
@@ -12,7 +15,7 @@ class MultipartData
 
   def initialize
     @params = []
-    @boundary = '8237408635084605133298472980147256701603264978123964023956'
+    @boundary = Configuration.MULTIPART_BOUNDARY
   end
     
   # Add a field with its value to the multipart data

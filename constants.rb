@@ -7,27 +7,27 @@
 class Constants
 
   # Expected response to a fetch request
-  @@fetch_response = 'CLIOWL SERVER API'  
-  def self.fetch_response
-    @@fetch_response
+  @@FETCH_RESPONSE = 'CLIOWL SERVER API'  
+  def self.FETCH_RESPONSE
+    @@FETCH_RESPONSE
   end
 
   # Session token length
-  @@token_length = 32 
-  def self.token_length
-    @@token_length
+  @@TOKEN_LENGTH = 32 
+  def self.TOKEN_LENGTH
+    @@TOKEN_LENGTH
   end
 
   # Generic success message
-  @@success_message = '0' 
-  def self.success_message
-    @@success_message
+  @@SUCCESS_MESSAGE = '0' 
+  def self.SUCCESS_MESSAGE
+    @@SUCCESS_MESSAGE
   end
 
   # Generic failure message
-  @@failure_message = '' 
-  def self.failure_message
-    @@failure_message
+  @@FAILURE_MESSAGE = '' 
+  def self.FAILURE_MESSAGE
+    @@FAILURE_MESSAGE
   end
   
 end

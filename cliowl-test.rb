@@ -24,7 +24,7 @@ class Main
 
     if ARGV.size > 0
       if ARGV.include? '-v'
-        Configuration.verbose = true
+        Configuration.VERBOSE = true
       end
       
       if not options.include? ARGV[0]        

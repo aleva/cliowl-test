@@ -46,7 +46,7 @@ class HttpHelper
   # @param [MultipartData] data - data that will be posted
   # @return [String] the server response to the post
   def self.post_multipart url, data
-    puts "\nHttpHelper#post_multipart:\n#{data.build}" if Configuration.verbose
+    puts "\nHttpHelper#post_multipart:\n#{data.build}" if Configuration.VERBOSE
     url = URI.parse(url)
     req = Net::HTTP::Post.new(url.path)
     req.content_length = data.build.size

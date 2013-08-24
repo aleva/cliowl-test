@@ -8,9 +8,6 @@
 # JSON parsing
 require 'json'
 
-# MD5 for passwords
-require 'digest/md5'
-
 # HTTP requests
 require './http-helper.rb'
 
@@ -29,12 +26,12 @@ class Tester
   # 
   # @return [Boolean] true if the server response is as expected, false otherwise
   def test_fetch
-    server = Configuration.server
-    addr = Configuration.cliowl_address
+    server = Configuration.SERVER
+    addr = Configuration.CLIOWL_ADDRESS
     
     res = HttpHelper.get(server, "#{addr}/fetch")
-    puts "\nTester#test_fetch:\n#{res}" if Configuration.verbose
-    res == Constants.fetch_response
+    puts "\nTester#test_fetch:\n#{res}" if Configuration.VERBOSE
+    res == Constants.FETCH_RESPONSE
   end
   
   # Test login with the correct parameters
@@ -42,66 +39,66 @@ class Tester
   # @return [Boolean] true if the server returns a token with letters and numbers with the expected length, false 
   # otherwise
   def test_correct_login
-    res = make_login Configuration.user, Configuration.password
-    puts "\nTester#test_correct_login:\n#{res}" if Configuration.verbose
-    res and res.length == Constants.token_length and res =~ /^[0-9a-f]*$/
+    res = make_login Configuration.USER, Configuration.PASSWORD
+    puts "\nTester#test_correct_login:\n#{res}" if Configuration.VERBOSE
+    res and res.length == Constants.TOKEN_LENGTH and res =~ /^[0-9a-f]*$/
   end
   
   # Test login with a user that does not exist
   # 
   # @return [Boolean] true if the server returns a empty string, false otherwise
   def test_wrong_user_login
-    res = make_login Configuration.wrong_user, Configuration.password
-    puts "\nTester#test_wrong_user_login:\n#{res}" if Configuration.verbose
-    res == Constants.failure_message
+    res = make_login Configuration.WRONG_USER, Configuration.PASSWORD
+    puts "\nTester#test_wrong_user_login:\n#{res}" if Configuration.VERBOSE
+    res == Constants.FAILURE_MESSAGE
   end
   
   # Test login using a wrong password for an existing user
   # 
   # @return [Boolean] true if the server returns a empty string, false otherwise
   def test_wrong_password_login
-    res = make_login Configuration.user, Configuration.wrong_password
-    puts "\nTester#test_wrong_password_login:\n#{res}" if Configuration.verbose
-    res == Constants.failure_message
+    res = make_login Configuration.USER, Configuration.WRONG_PASSWORD
+    puts "\nTester#test_wrong_password_login:\n#{res}" if Configuration.VERBOSE
+    res == Constants.FAILURE_MESSAGE
   end
     
   # Test the creation of a new page
   # 
   # @return [Boolean] true if the page was successfully created, false otherwise
   def test_create_page
-    file = Configuration.test_page
+    file = Configuration.TEST_PAGE
     
     # This test depends on a succesfull login
     if test_correct_login
-      token = make_login Configuration.user, Configuration.password
+      token = make_login Configuration.USER, Configuration.PASSWORD
     else
       return false
     end
     
-    page_key = 'page-test-1'
+    page_key = 'page-test-' + random_string(Configuration.PAGE_KEY_RS_SIZE)
     res = post_page file, token, page_key, 'test-tag', 'This is a Test Page'
     
     # Remove the just created page
     remove_page page_key, token
     
-    puts "\nTester#test_create_page:\n#{res}" if Configuration.verbose
-    res == Constants.success_message
+    puts "\nTester#test_create_page:\n#{res}" if Configuration.VERBOSE
+    res == Constants.SUCCESS_MESSAGE
   end
     
   # Test the deletion of a page
   # 
   # @return [Boolean] true if the page was successfully removed, false otherwise
   def test_remove_page
-    file = Configuration.test_page
+    file = Configuration.TEST_PAGE
     
     # This test depends on a succesfull login
     if test_correct_login
-      token = make_login Configuration.user, Configuration.password
+      token = make_login Configuration.USER, Configuration.PASSWORD
     else
       return false
     end
     
-    page_key = 'page-test-2'
+    page_key = 'page-test-' + random_string(Configuration.PAGE_KEY_RS_SIZE)
     
     # This test also depends on a succesfull page creation
     if test_create_page
@@ -111,25 +108,25 @@ class Tester
     end
     
     res = remove_page page_key, token
-    puts "\nTester#test_remove_page:\n#{res}" if Configuration.verbose 
-    res == Constants.success_message
+    puts "\nTester#test_remove_page:\n#{res}" if Configuration.VERBOSE 
+    res == Constants.SUCCESS_MESSAGE
   end
   
   # Test updating a page
   # 
   # @return [Boolean] true if the page was successfully updated, false otherwise
   def test_update_page
-    file = Configuration.test_page
-    file2 = Configuration.other_test_page
+    file = Configuration.TEST_PAGE
+    file2 = Configuration.OTHER_TEST_PAGE
     
     # This test depends on a succesfull login
     if test_correct_login
-      token = make_login Configuration.user, Configuration.password
+      token = make_login Configuration.USER, Configuration.PASSWORD
     else
       return false
     end
     
-    page_key = 'page-test-3'
+    page_key = 'page-test-' + random_string(Configuration.PAGE_KEY_RS_SIZE)
     
     # This test also depends on a succesfull page creation
     if test_create_page
@@ -139,31 +136,35 @@ class Tester
     end
     
     res = post_page file2, token, page_key, 'test-tag-2', 'This is a Test Page 2'
-    puts "\nTester#test_update_page:\n#{res}" if Configuration.verbose 
-    res == Constants.success_message
+    puts "\nTester#test_update_page:\n#{res}" if Configuration.VERBOSE 
+    res == Constants.SUCCESS_MESSAGE
   end
   
   # Test listing pages
   # 
   # @return [Boolean] true if the pages was successfully listed, false otherwise
   def test_list_pages
-    server = Configuration.server
-    addr = Configuration.cliowl_address
-    file = Configuration.test_page
-    file2 = Configuration.other_test_page
-    user = Configuration.user
+    server = Configuration.SERVER
+    addr = Configuration.CLIOWL_ADDRESS
+    file = Configuration.TEST_PAGE
+    file2 = Configuration.OTHER_TEST_PAGE
+    user = Configuration.USER
     
     # This test depends on a succesfull login
     if test_correct_login
-      token = make_login user, Configuration.password
+      token = make_login user, Configuration.PASSWORD
     else
       return false
     end
     
+    page_key1 = 'page-test-' + random_string(Configuration.PAGE_KEY_RS_SIZE)
+    page_key2 = 'page-test-' + random_string(Configuration.PAGE_KEY_RS_SIZE)
+    page_key3 = 'page-test-' + random_string(Configuration.PAGE_KEY_RS_SIZE)
+
     pages = [ 
-      { "key" => 'page-key1', "name" => 'This is a Test Page' },
-      { "key" => 'page-key2', "name" => 'This is a Test Page' },
-      { "key" => 'page-key3', "name" => 'This is a Test Page' } ]
+      { "key" => page_key1, "name" => 'This is a Test Page' },
+      { "key" => page_key2, "name" => 'This is a Test Page' },
+      { "key" => page_key3, "name" => 'This is a Test Page' } ]
     
     # This test also depends on succesfull page creation
     if test_create_page
@@ -197,26 +198,26 @@ class Tester
       keys_match = false if not page_key_match
     end
     
-    puts "\nTester#test_list_pages:\n#{res}" if Configuration.verbose
+    puts "\nTester#test_list_pages:\n#{res}" if Configuration.VERBOSE
     page_list.size == pages.size and keys_match    
   end
   
   def test_get_page
-    server = Configuration.server
-    addr = Configuration.cliowl_address
-    file = Configuration.test_page
-    user = Configuration.user
+    server = Configuration.SERVER
+    addr = Configuration.CLIOWL_ADDRESS
+    file = Configuration.TEST_PAGE
+    user = Configuration.USER
     
     file_content = File.read(file)
     
     # This test depends on a succesfull login
     if test_correct_login
-      token = make_login user, Configuration.password
+      token = make_login user, Configuration.PASSWORD
     else
       return false
     end
     
-    key = 'page-key-4'
+    key = 'page-test-' + random_string(Configuration.PAGE_KEY_RS_SIZE)
     
     if test_create_page
       post_page file, token, key, 'test-tag', 'This is a Test Page'
@@ -225,7 +226,7 @@ class Tester
     end
     
     res = HttpHelper.get(server, "#{addr}/page/#{user}/#{key}")
-    puts "\nTester#test_get_page:\n#{res}" if Configuration.verbose    
+    puts "\nTester#test_get_page:\n#{res}" if Configuration.VERBOSE    
     res == file_content
   end
   
@@ -235,8 +236,8 @@ class Tester
   # @param [String] password - password that will be used to login
   # @return [String] the server response to the login attempt
   def make_login user, password
-    server = Configuration.server
-    addr = Configuration.cliowl_address
+    server = Configuration.SERVER
+    addr = Configuration.CLIOWL_ADDRESS
     
     HttpHelper.post "http://#{server}#{addr}/login", { 'user' => user, 'password' => password }
   end
@@ -250,8 +251,8 @@ class Tester
   # @param [String] title - title for the new page
   # @return [Boolean] true if the page was successfully created, false otherwise
   def post_page file, token, key, tags, title
-    server = Configuration.server
-    addr = Configuration.cliowl_address
+    server = Configuration.SERVER
+    addr = Configuration.CLIOWL_ADDRESS
 
     # Builds the multipart data
     data = MultipartData.new
@@ -271,8 +272,15 @@ class Tester
   # @param [String] key - key that identifies the page that will be removed
   # @param [String] token - authentication token
   def remove_page key, token
-    server = Configuration.server
-    addr = Configuration.cliowl_address
+    server = Configuration.SERVER
+    addr = Configuration.CLIOWL_ADDRESS
     HttpHelper.get(server, "#{addr}/remove/#{key}/#{token}")
+  end
+
+  # Creates a random string 
+  #
+  # @param [int] size - Size of the string
+  def random_string size 
+    (0..size).map { ('a'..'z').to_a[rand(26)] }.join
   end
 end

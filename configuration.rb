@@ -5,62 +5,74 @@
 
 # Local configurations that must be changed to test your cliowl implementation
 class Configuration
+  
+  # Boundary for multipart data http posts
+  @@MULTIPART_BOUNDARY = '8237408635084605133298472980147256701603264978123964023956'
+  def self.MULTIPART_BOUNDARY
+    @@MULTIPART_BOUNDARY
+  end  
 
   # True if the program is on verbose mode
-  @@verbose = false
-  def self.verbose
-    @@verbose
+  @@VERBOSE = false
+  def self.VERBOSE
+    @@VERBOSE
   end  
-  def self.verbose= value
-    @@verbose = value
+  def self.VERBOSE= value
+    @@VERBOSE = value
   end
 
+  # Size of the random string that is appended to test page keys  
+  @@PAGE_KEY_RS_SIZE = 50
+  def self.PAGE_KEY_RS_SIZE
+    @@PAGE_KEY_RS_SIZE
+  end  
+
   # Address of the cliowl server that contains the implementation being tested (without "http://")
-  @@server = 'localhost'  
-  def self.server
-    @@server
+  @@SERVER = 'localhost'  
+  def self.SERVER
+    @@SERVER
   end
   
   # Path to the cliowl instance from the server web root
-  @@cliowl_address = '/cliowl'  
-  def self.cliowl_address
-    @@cliowl_address
+  @@CLIOWL_ADDRESS = '/cliowl'  
+  def self.CLIOWL_ADDRESS
+    @@CLIOWL_ADDRESS
   end
   
   # User that exists within the cliowl server
-  @@user = 'root'  
-  def self.user
-    @@user
+  @@USER = 'root'  
+  def self.USER
+    @@USER
   end
   
   # Password of a user that exists within the cliowl server
-  @@password = 'abcde12345'  
-  def self.password
-    @@password
+  @@PASSWORD = 'abcde12345'  
+  def self.PASSWORD
+    @@PASSWORD
   end
   
   # User that does not exist within the cliowl server
-  @@wrong_user = 'wrong_user'  
-  def self.wrong_user
-    @@wrong_user
+  @@WRONG_USER = 'wrong_user'  
+  def self.WRONG_USER
+    @@WRONG_USER
   end
   
   # Wrong password for the user @@user
-  @@wrong_password = 'wrong_password'  
-  def self.wrong_password
-    @@wrong_password
+  @@WRONG_PASSWORD = 'wrong_password'  
+  def self.WRONG_PASSWORD
+    @@WRONG_PASSWORD
   end
   
   # A test file with content for a page (in markdown format) 
-  @@test_page = 'data/test.md'  
-  def self.test_page
-    @@test_page
+  @@TEST_PAGE = 'data/test.md'  
+  def self.TEST_PAGE
+    @@TEST_PAGE
   end
   
   # A test file with content for a page (in markdown format) different from the previous one
-  @@other_test_page = 'data/test2.md'  
-  def self.other_test_page
-    @@other_test_page
+  @@OTHER_TEST_PAGE = 'data/test2.md'  
+  def self.OTHER_TEST_PAGE
+    @@OTHER_TEST_PAGE
   end
   
 end
