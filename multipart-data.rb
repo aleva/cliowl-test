@@ -40,7 +40,7 @@ class MultipartData
       "Content-Transfer-Encoding: binary\n" +
       "Content-Type: #{mime}\n" + 
       "\n" + 
-      "#{content}\n"
+      "#{content}"
   end
   
   # Build and return the complete multipart data

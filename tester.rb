@@ -227,7 +227,8 @@ class Tester
     
     res = HttpHelper.get(server, "#{addr}/page/#{user}/#{key}")
     puts "\nTester#test_get_page:\n#{res}" if Configuration.VERBOSE    
-    res == file_content
+    puts "Tester#test_get_page(file_content):\n#{file_content}" if Configuration.VERBOSE
+    res.chomp.bytes.to_a == file_content.chomp.bytes.to_a
   end
   
   # Try to make login
