@@ -176,6 +176,7 @@ class Tester
     end
     
     res = HttpHelper.get(server, "#{addr}/list/#{user}")
+    puts "\nTester#test_list_pages:\n#{res}" if Configuration.VERBOSE
     
     begin
       # Parse JSON return
@@ -197,8 +198,7 @@ class Tester
       remove_page p["key"], token      
       keys_match = false if not page_key_match
     end
-    
-    puts "\nTester#test_list_pages:\n#{res}" if Configuration.VERBOSE
+
     page_list.size == pages.size and keys_match    
   end
   
